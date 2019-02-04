@@ -27,6 +27,7 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
+  "com.twitter" %% "finatra-http" % "19.1.0"
 )
 
 mainClass in Compile := entryPoint
