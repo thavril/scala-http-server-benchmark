@@ -9,6 +9,9 @@ import com.twitter.finatra.http.routing.HttpRouter
 object Main extends HttpServerBenchmark
 
 class HttpServerBenchmark extends HttpServer {
+
+  override val defaultHttpPort: String = ":8080"
+
   override def configureHttp(router: HttpRouter): Unit = {
     router.add[HttpServerBenchmarkController]
   }

@@ -28,6 +28,8 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   "com.twitter" %% "finatra-http" % "19.1.0"
+    exclude("org.slf4j", "jcl-over-slf4j"),
+  "ch.qos.logback" % "logback-classic" % "1.2.3"
 )
 
 mainClass in Compile := entryPoint
@@ -45,6 +47,7 @@ addArtifact(artifact in(Compile, assembly), assembly)
 
 // Assembly merge strategy
 assemblyMergeStrategy in assembly := {
+  case "BUILD" => MergeStrategy.discard
   case "META-INF/io.netty.versions.properties" => MergeStrategy.first
   case x => (assemblyMergeStrategy in assembly).value(x)
 }
