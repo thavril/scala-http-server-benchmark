@@ -27,6 +27,7 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
+  "com.github.finagle" %% "finchx-core" % "0.27.0"
 )
 
 mainClass in Compile := entryPoint
