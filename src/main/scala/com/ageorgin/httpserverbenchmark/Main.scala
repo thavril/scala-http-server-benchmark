@@ -32,6 +32,40 @@ class HelloRequestHandler(context: ServerContext) extends RequestHandler(context
     case request @ Get on Root / "test" => {
       Callback.successful(request.ok("It Works!"))
     }
+    case request @ Get on Root / "cpu" / Long(iterations) => {
+      val result = slowFunction(iterations.toInt)
+      Callback.successful(request.ok(result.toString))
+    }
+    case request @ Get on Root / "cpu-print" / Long(iterations) => {
+      val result = slowFunctionWithPrint(iterations.toInt)
+      Callback.successful(request.ok(result.toString))
+    }
   }
 
+  private def slowFunction(iterations: Int): Double = {
+    val t0 = System.nanoTime()
+    var result: Double = 0
+
+    for (i <- 0 until iterations) {
+      result += Math.atan(i.toDouble) * Math.tan(i.toDouble)
+    }
+
+    val t1 = System.nanoTime()
+
+    result
+  }
+
+  private def slowFunctionWithPrint(iterations: Int): Double = {
+    val t0 = System.nanoTime()
+    var result: Double = 0
+
+    for (i <- 0 until iterations) {
+      result += Math.atan(i.toDouble) * Math.tan(i.toDouble)
+    }
+
+    val t1 = System.nanoTime()
+    println(s"elapsed time: ${(t1 - t0) / 1000000}")
+
+    result
+  }
 }
