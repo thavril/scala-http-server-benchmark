@@ -7,6 +7,8 @@ import com.twitter.util.Await
 import io.finch._
 import io.finch.catsEffect._
 
+import scala.io.Source
+
 object Main extends App {
 
   def test: Endpoint[IO, String] = get("test") {
@@ -23,15 +25,22 @@ object Main extends App {
     Ok(result.toString)
   }
 
+  def io: Endpoint[IO, String] = get("io") {
+    val result = ioFunction()
+    Ok(result.toString)
+  }
+
+  def ioPrint: Endpoint[IO, String] = get("io-print") {
+    val result = ioFunctionWithPrint()
+    Ok(result.toString)
+  }
+
   private def slowFunction(iterations: Int): Double = {
-    val t0 = System.nanoTime()
     var result: Double = 0
 
     for (i <- 0 until iterations) {
       result += Math.atan(i.toDouble) * Math.tan(i.toDouble)
     }
-
-    val t1 = System.nanoTime()
 
     result
   }
@@ -50,9 +59,29 @@ object Main extends App {
     result
   }
 
+  private def ioFunction(): Int = {
+    var result = 0
+
+    Source.fromFile("file.txt").foreach(char => if (char == 'e') result += 1)
+
+    result
+  }
+
+  private def ioFunctionWithPrint(): Int = {
+    val t0 = System.nanoTime()
+    var result = 0
+
+    Source.fromFile("file.txt").foreach(char => if (char == 'e') result += 1)
+
+    val t1 = System.nanoTime()
+    println(s"elapsed time: ${(t1 - t0) / 1000000}")
+
+    result
+  }
+
   def service: Service[Request, Response] = Bootstrap
-      .serve[Text.Plain](test :+: cpu :+: cpuPrint)
-      .toService
+    .serve[Text.Plain](test :+: cpu :+: cpuPrint :+: io :+: ioPrint)
+    .toService
 
   Await.ready(Http.server.serve("0.0.0.0:8080", service))
 }
