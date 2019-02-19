@@ -27,6 +27,7 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
+  "com.tumblr" %% "colossus" % "0.11.0"
 )
 
 mainClass in Compile := entryPoint
